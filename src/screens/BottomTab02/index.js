@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, TouchableWithoutFeedback } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {StyleSheet, View, TouchableWithoutFeedback} from 'react-native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 // 空列表
@@ -20,8 +20,7 @@ export default function BottomTab02() {
         tabBarShowLabel: false, // 隐藏标签
         showIcon: true, // 显示图标
         tabBarStyle: styles.tabBar, // 样式
-      }}
-    >
+      }}>
       <Tab.Screen
         name={'Home'}
         component={EmptyPage}
@@ -29,7 +28,7 @@ export default function BottomTab02() {
           tabBarItemStyle: {
             height: 0,
           },
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({color, size}) => (
             <View style={styles.tabIconContainner}>
               <Icon name={'home'} size={size} color={color} />
             </View>
@@ -43,7 +42,7 @@ export default function BottomTab02() {
           tabBarItemStyle: {
             height: 0,
           },
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({color, size}) => (
             <View style={styles.tabIconContainner}>
               <Icon name={'search'} size={size} color={color} />
             </View>
@@ -57,7 +56,7 @@ export default function BottomTab02() {
           tabBarItemStyle: {
             height: 0,
           },
-          tabBarButton: (props) => <AddPage {...props} />,
+          tabBarButton: props => <AddPage {...props} />,
         }}
       />
       <Tab.Screen
@@ -67,7 +66,7 @@ export default function BottomTab02() {
           tabBarItemStyle: {
             height: 0,
           },
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({color, size}) => (
             <View style={styles.tabIconContainner}>
               <Icon name={'face'} size={size} color={color} />
             </View>
@@ -82,7 +81,7 @@ export default function BottomTab02() {
           tabBarItemStyle: {
             height: 0,
           },
-          tabBarIcon: ({ color, size }) => (
+          tabBarIcon: ({color, size}) => (
             <View style={styles.tabIconContainner}>
               <Icon name={'fingerprint'} size={size} color={color} />
             </View>
