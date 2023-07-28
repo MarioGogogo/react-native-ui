@@ -1,15 +1,8 @@
 /* eslint-disable react-native/no-inline-styles */
-import {fa} from 'faker/lib/locales';
 import React, {useCallback, useState} from 'react';
 import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
-import Animated, {
-  FadeIn,
-  FadeOut,
-  Layout,
-  ZoomIn,
-  ZoomOut,
-} from 'react-native-reanimated';
+import Animated, {FadeIn, FadeOut, Layout} from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 const COLOR = '#5359D1';
 
@@ -35,7 +28,7 @@ export default function Template() {
     <View style={styles.container}>
       <ScrollView
         style={{flex: 1}}
-        contentContainerStyle={{paddingHorizontal: 0}}>
+        contentContainerStyle={{paddingHorizontal: 20}}>
         {items.map((item, index) => (
           <Animated.View
             key={item.id}

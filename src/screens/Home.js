@@ -36,6 +36,9 @@ const Home = ({navigation}) => {
       <List.Accordion title="波浪" left={leftIcon()} right={rightIcon()}>
         <List.Item title="电话响了" onPress={() => navigate('Wave01')} />
       </List.Accordion>
+      <List.Accordion title="轮播动画" left={leftIcon()} right={rightIcon()}>
+        <List.Item title="轮播01" onPress={() => navigate('Swiper01')} />
+      </List.Accordion>
       <List.Accordion
         title="Floating Action Button"
         left={leftIcon()}
