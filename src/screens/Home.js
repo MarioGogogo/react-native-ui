@@ -19,6 +19,7 @@ const Home = ({navigation}) => {
         <List.Item title="底部导航1" onPress={() => navigate('Tab1')} />
         <List.Item title="底部动画导航2" onPress={() => navigate('Tab2')} />
         <List.Item title="底部动画导航3" onPress={() => navigate('Tab3')} />
+        <List.Item title="底部动画导航4" onPress={() => navigate('Tab4')} />
         {/* <List.Item title="Animatable Tab1" onPress={() => navigate('Tab1')} />
         <List.Item title="Animatable Tab2" onPress={() => navigate('Tab2')} />
         <List.Item title="Animatable Tab3" onPress={() => navigate('Tab3')} />

@@ -21,6 +21,7 @@ import DrawerNav1 from './src/screens/drawer/DrawerNav1';
 import BottomTab01 from './src/screens/BottomTab01';
 import BottomTab02 from './src/screens/BottomTab02';
 import BottomTab03 from './src/screens/BottomTab03';
+import BottomTab04 from './src/screens/BottomTab04';
 import Dialog01 from './src/screens/Dialog01';
 import List01 from './src/screens/List01';
 import List02 from './src/screens/List02';
@@ -73,6 +74,7 @@ const RootStack = () => {
       <Stack.Screen name="Tab1" component={BottomTab01} />
       <Stack.Screen name="Tab2" component={BottomTab02} />
       <Stack.Screen name="Tab3" component={BottomTab03} />
+      <Stack.Screen name="Tab4" component={BottomTab04} />
       {/* 弹窗 */}
       <Stack.Screen name="Dialog1" component={Dialog01} />
       {/* 列表 */}
