@@ -46,10 +46,7 @@ const Home = ({navigation}) => {
         right={rightIcon()}>
         <List.Item title="Animated Fab" onPress={() => navigate('Fab')} />
       </List.Accordion>
-      <List.Accordion
-        title="Drawer Navigation"
-        left={leftIcon()}
-        right={rightIcon()}>
+      <List.Accordion title="抽屉导航" left={leftIcon()} right={rightIcon()}>
         <List.Item title="侧边栏抽屉" onPress={() => navigate('Drawer1')} />
         <List.Item title="Drawer 2" onPress={() => navigate('Drawer2')} />
       </List.Accordion>
