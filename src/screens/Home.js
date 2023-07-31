@@ -39,6 +39,7 @@ const Home = ({navigation}) => {
       </List.Accordion>
       <List.Accordion title="轮播动画" left={leftIcon()} right={rightIcon()}>
         <List.Item title="轮播01" onPress={() => navigate('Swiper01')} />
+        <List.Item title="轮播02" onPress={() => navigate('Swiper02')} />
       </List.Accordion>
       <List.Accordion
         title="Floating Action Button"
