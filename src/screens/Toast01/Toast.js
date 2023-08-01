@@ -1,5 +1,6 @@
 import React, {
   Ref,
+  forwardRef,
   useEffect,
   useImperativeHandle,
   useRef,
@@ -11,14 +12,16 @@ import Animated, {
   Extrapolation,
   interpolate,
   runOnJS,
+  timing,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
+  withSpring,
   withTiming,
 } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-export default function Toast() {
+const Toast = forwardRef((props, ref) => {
   const [textLength, setTextLength] = useState(0);
   const [toastHeight, setToastHeight] = useState(0);
   const [config, setConfig] = useState({
@@ -27,22 +30,108 @@ export default function Toast() {
     duration: 0,
   });
 
+  //设置y初始值
   const transY = useSharedValue(0);
+  const transX = useSharedValue(0);
+  const visibleState = useSharedValue(false);
 
+  useEffect(() => {
+    if (config.text && toastHeight && textLength) {
+      transX.value = textLength + 12;
+      console.log('渲染到字符长度', textLength);
+      showToast();
+    }
+  }, [config, toastHeight, textLength]);
   useEffect(() => {
     if (toastHeight) {
       transY.value = -toastHeight;
     }
   }, [toastHeight]);
 
+  useImperativeHandle(ref, () => ({
+    show,
+    hide,
+  }));
+
+  const show = (text, type, duration) => {
+    setConfig({
+      text,
+      type,
+      duration,
+    });
+  };
+
+  const rView = useAnimatedStyle(() => {
+    return {
+      transform: [{translateY: transY.value}],
+    };
+  }, []);
+
+  const rOutView = useAnimatedStyle(() => {
+    return {
+      transform: [{translateX: -transX.value / 2}],
+    };
+  }, []);
+  const rInnerView = useAnimatedStyle(() => {
+    return {
+      transform: [{translateX: transX.value}],
+    };
+  }, []);
+
+  const showToast = () => {
+    // 如果字没有显示 则显示出来
+    if (!visibleState.current) {
+      visibleState.current = true;
+      transY.value = withSpring(60, {duration: config.duration});
+      transX.value = withDelay(
+        config.duration,
+        withTiming(0, {duration: config.duration}),
+      );
+    }
+  };
+
+  const hide = callback => {
+    // 先缩短
+    transX.value = withSpring(textLength + 4, {duration: config.duration});
+    // 再升上去
+    transY.value = withDelay(
+      config.duration,
+      withSpring(
+        -toastHeight,
+        {
+          duration: config.duration,
+          easing: Easing.bezier(0.36, 0.0, 0.66, -0.56),
+        },
+        () => {
+          runOnJS(handleOnFinish)(callback);
+        },
+      ),
+    );
+  };
+
+  const handleOnFinish = callback => {
+    setConfig({
+      text: undefined,
+      type: undefined,
+      duration: 0,
+    });
+    //执行回调
+    if (callback) {
+      setTimeout(() => {
+        callback();
+      }, 0);
+    }
+    visibleState.current = false;
+  };
+
   //根据type显示不同图标
   const generateImage = () => {
     if (config?.type === 'success') {
-      return <Icon name={'success'} size={22} color={gengerateBgColor()} />;
+      return <Icon name={'success'} size={22} color={'#fff'} />;
     } else if (config?.type === 'error') {
       return <Icon name={'error'} size={22} color={gengerateBgColor()} />;
     } else {
-      return <Icon name={'info'} size={22} color={gengerateBgColor()} />;
+      return <Icon name={'info'} size={22} color={'#fff'} />;
     }
   };
 
@@ -59,17 +148,31 @@ export default function Toast() {
     //高度
     setToastHeight(event.nativeEvent.layout.height);
   };
+  const handleTextLayout = event => {
+    setTextLength(Math.floor(event.nativeEvent.layout.width));
+  };
   return (
-    <Animated.View onLayout={handleViewLayout} style={styles.container}>
-      <View>
-        {/* 图标 */}
-        {generateImage()}
-        {/* 文本 */}
-        <Text>{config?.text}</Text>
-      </View>
+    <Animated.View
+      onLayout={handleViewLayout}
+      style={[styles.container, rView]}>
+      <Animated.View style={[styles.outerContainer, rOutView]}>
+        <Animated.View
+          style={[
+            styles.innerContainer,
+            {backgroundColor: gengerateBgColor()},
+            rInnerView,
+          ]}>
+          {/* 图标 */}
+          {generateImage()}
+          {/* 文本 */}
+          <Text onLayout={handleTextLayout} style={styles.text}>
+            {config?.text}
+          </Text>
+        </Animated.View>
+      </Animated.View>
     </Animated.View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -81,6 +184,7 @@ const styles = StyleSheet.create({
   outerContainer: {
     overflow: 'hidden',
     borderRadius: 40,
+    // transform: [{translateX: -70 / 2}],
   },
   innerContainer: {
     flexDirection: 'row',
@@ -88,6 +192,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 12,
     borderRadius: 40,
+    transform: [{translateX: 70}],
   },
   image: {
     width: 20,
@@ -101,3 +206,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+export default Toast;
