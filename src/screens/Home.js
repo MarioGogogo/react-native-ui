@@ -51,6 +51,9 @@ const Home = ({navigation}) => {
         <List.Item title="侧边栏抽屉" onPress={() => navigate('Drawer1')} />
         <List.Item title="Drawer 2" onPress={() => navigate('Drawer2')} />
       </List.Accordion>
+      <List.Accordion title="提示动画" left={leftIcon()} right={rightIcon()}>
+        <List.Item title="Toast01" onPress={() => navigate('Toast01')} />
+      </List.Accordion>
     </View>
   );
 };
