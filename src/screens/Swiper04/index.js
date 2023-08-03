@@ -22,18 +22,46 @@ const FOOD_ITEMS = [
     amount: 'LKR 700.00',
     quantity: 4,
   },
+  {
+    id: 5,
+    name: 'Jack Chan',
+    amount: 'LKR 555.00',
+    quantity: 3,
+  },
+  {
+    id: 6,
+    name: 'Love',
+    amount: 'LKR 888.88',
+    quantity: 5,
+  },
 ];
 export default function Swiper04() {
   const [allItems, setAllItems] = useState(FOOD_ITEMS);
+  const [swipeOpen, setSwipeOpen] = useState(null);
   const flatListRef = useRef(null);
   const panRef = useRef(null);
 
   const renderItem = ({item}) => {
-    return <FoodItem data={item} onRemove={handleRemove} />;
+    return (
+      <FoodItem
+        data={item}
+        onRemove={handleRemove}
+        onSwipeOpenChange={onSwipeOpenChange}
+      />
+    );
   };
 
   const handleRemove = id => {
     setAllItems(prevState => prevState.filter(item => item.id !== id));
+  };
+
+  const onSwipeOpenChange = tag => {
+    console.log(
+      '%c Line:59 🍡 打开了open',
+      'font-size:18px;color:#ffffff;background:#f368e0',
+      tag,
+    );
+    // swipeOpen(() => tag + '_open');
   };
 
   return (
@@ -63,7 +91,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F6F7EB',
   },
   innerContainer: {
-    height: 200,
+    // height: 200,
     width: '100%',
   },
   topView: {

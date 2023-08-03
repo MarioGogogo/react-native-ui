@@ -36,7 +36,7 @@ const SWIPE_THRESHOLD = DELETE_BUTTON_WIDTH;
 //   prevX: 0,
 //   temp: 0,
 // };
-export default function FoodItem({data, onRemove}) {
+export default function FoodItem({data, onRemove, onSwipeOpenChange}) {
   const AnimatedTouchableOpacity =
     Animated.createAnimatedComponent(TouchableOpacity);
   const transX = useSharedValue(0);
@@ -46,58 +46,61 @@ export default function FoodItem({data, onRemove}) {
   //   prevX: 0,
   //   temp: 0,
   // });
-  const panGestureHandler = useAnimatedGestureHandler({
-    onStart: (_, context) => {
-      context.translateX = transX.value;
-      context.temp = 0;
-    },
-    onActive: (event, context) => {
-      //阻止 向右滑动
-      const isSwipingLeft = context.prevX
-        ? context.prevX >= event.translationX
-        : true;
-      console.log(
-        '%c Line:44 🥪 isSwipingLeft',
-        'font-size:18px;color:#ffffff;background:#ff6b6b',
-        context.translateX,
-        isSwipingLeft,
-      );
+  const panGestureHandler = useAnimatedGestureHandler(
+    {
+      onStart: (_, context) => {
+        context.translateX = transX.value;
+        context.temp = 0;
+      },
+      onActive: (event, context) => {
+        //阻止 向右滑动
+        const isSwipingLeft = context.prevX
+          ? context.prevX >= event.translationX
+          : true;
+        console.log(
+          '%c Line:44 🥪 isSwipingLeft',
+          'font-size:18px;color:#ffffff;background:#ff6b6b',
+          context.translateX,
+          isSwipingLeft,
+        );
 
-      if (transX.value >= 0 && !isSwipingLeft) {
-        transX.value = 0;
-        return;
-      }
-      if (-transX.value > SWIPE_THRESHOLD && isSwipingLeft) {
-        //模拟阻力 到达阈值之后拖动很慢
-        const temp =
-          (event.translationX + context.translateX) * 0.005 + transX.value;
-        transX.value = withTiming(temp, {duration: 0});
-        context.temp = temp;
-      } else if (context.temp) {
-        transX.value = transX.value - (context.prevX - event.translationX);
-      } else {
-        transX.value = event.translationX + context.translateX;
-      }
-      context.prevX = event.translationX;
-      console.log(
-        '%c Line:74 🥪 event.translationX',
-        'font-size:18px;color:#ffffff;background:#f368e0',
-        event.translationX,
-        context.prevX,
-      );
+        if (transX.value >= 0 && !isSwipingLeft) {
+          transX.value = 0;
+          return;
+        }
+        if (-transX.value > SWIPE_THRESHOLD && isSwipingLeft) {
+          //模拟阻力 到达阈值之后拖动很慢
+          const temp =
+            (event.translationX + context.translateX) * 0.005 + transX.value;
+          transX.value = withTiming(temp, {duration: 0});
+          context.temp = temp;
+        } else if (context.temp) {
+          transX.value = transX.value - (context.prevX - event.translationX);
+        } else {
+          transX.value = event.translationX + context.translateX;
+        }
+        context.prevX = event.translationX;
+        console.log(
+          '%c Line:74 🥪 event.translationX',
+          'font-size:18px;color:#ffffff;background:#f368e0',
+          event.translationX,
+          context.prevX,
+        );
+      },
+      onEnd: event => {
+        //未拉倒阈值
+        if (-event.translationX < SWIPE_THRESHOLD / 2) {
+          transX.value = withTiming(0, {duration: 300, easing: Easing.quad});
+        } else {
+          transX.value = withTiming(-SWIPE_THRESHOLD, {
+            duration: 300,
+            easing: Easing.quad,
+          });
+        }
+      },
     },
-    onEnd: event => {
-      //未拉倒阈值
-      if (-event.translationX < SWIPE_THRESHOLD / 2) {
-        transX.value = withTiming(0, {duration: 300, easing: Easing.quad});
-      } else {
-        transX.value = withTiming(-SWIPE_THRESHOLD, {
-          duration: 300,
-          easing: Easing.quad,
-        });
-      }
-    },
-  });
+    [onSwipeOpenChange],
+  );
 
   //滑动过程中偏移量
   const rInnerContainer = useAnimatedStyle(() => {
@@ -200,6 +203,7 @@ export default function FoodItem({data, onRemove}) {
   };
 
   return (
+    // item容器动画
     <Animated.View style={[styles.container, rDeleteContainer]}>
       {/*删除icon */}
       <View style={styles.deleteContainer}>
