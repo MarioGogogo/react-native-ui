@@ -41,11 +41,13 @@ const Toast = forwardRef((props, ref) => {
       console.log('渲染到字符长度', textLength);
       showToast();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [config, toastHeight, textLength]);
   useEffect(() => {
     if (toastHeight) {
       transY.value = -toastHeight;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toastHeight]);
 
   useImperativeHandle(ref, () => ({
@@ -82,7 +84,7 @@ const Toast = forwardRef((props, ref) => {
     // 如果字没有显示 则显示出来
     if (!visibleState.current) {
       visibleState.current = true;
-      transY.value = withSpring(60, {duration: config.duration});
+      transY.value = withSpring(40, {duration: config.duration});
       transX.value = withDelay(
         config.duration,
         withTiming(0, {duration: config.duration}),
@@ -92,10 +94,10 @@ const Toast = forwardRef((props, ref) => {
 
   const hide = callback => {
     // 先缩短
-    transX.value = withSpring(textLength + 4, {duration: config.duration});
+    transX.value = withTiming(textLength + 12, {duration: config.duration});
     // 再升上去
     transY.value = withDelay(
-      config.duration,
+      config.duration + 100,
       withSpring(
         -toastHeight,
         {
@@ -125,13 +127,14 @@ const Toast = forwardRef((props, ref) => {
   };
 
   //根据type显示不同图标
+  //根据type显示不同图标
   const generateImage = () => {
     if (config?.type === 'success') {
-      return <Icon name={'success'} size={22} color={'#fff'} />;
+      return <Icon name={'check-circle'} size={24} color={'#fff'} />;
     } else if (config?.type === 'error') {
-      return <Icon name={'error'} size={22} color={gengerateBgColor()} />;
+      return <Icon name={'cancel'} size={24} color={'#fff'} />;
     } else {
-      return <Icon name={'info'} size={22} color={'#fff'} />;
+      return <Icon name={'app-registration'} size={24} color={'#fff'} />;
     }
   };
 
@@ -192,7 +195,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 12,
     borderRadius: 40,
-    transform: [{translateX: 70}],
+    // transform: [{translateX: 70}],
   },
   image: {
     width: 20,

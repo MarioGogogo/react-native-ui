@@ -29,6 +29,8 @@ import List03 from './src/screens/List03';
 import Wave01 from './src/screens/Wave01';
 import Swiper01 from './src/screens/Swiper01';
 import Swiper02 from './src/screens/Swiper02';
+import Swiper03 from './src/screens/Swiper03';
+import Swiper04 from './src/screens/Swiper04';
 import Toast01 from './src/screens/Toast01';
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -88,6 +90,8 @@ const RootStack = () => {
       {/* 轮播 */}
       <Stack.Screen name="Swiper01" component={Swiper01} />
       <Stack.Screen name="Swiper02" component={Swiper02} />
+      <Stack.Screen name="Swiper03" component={Swiper03} />
+      <Stack.Screen name="Swiper04" component={Swiper04} />
       {/* Toast */}
       <Stack.Screen name="Toast01" component={Toast01} />
       {/*<Stack.Screen name="Tab2" component={AnimTab2} />
