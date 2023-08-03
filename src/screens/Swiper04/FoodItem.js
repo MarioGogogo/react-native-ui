@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, {useEffect} from 'react';
 import {
   Dimensions,
   StyleSheet,
@@ -23,7 +24,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-
+import Icon from 'react-native-vector-icons/MaterialIcons';
 //列表高度
 const ITEM_HEIGHT = 56;
 const {width: DEVICE_WIDTH} = Dimensions.get('window');
@@ -36,71 +37,78 @@ const SWIPE_THRESHOLD = DELETE_BUTTON_WIDTH;
 //   prevX: 0,
 //   temp: 0,
 // };
-export default function FoodItem({data, onRemove, onSwipeOpenChange}) {
+export default function FoodItem({data, onRemove, open, onSwipeOpenChange}) {
   const AnimatedTouchableOpacity =
     Animated.createAnimatedComponent(TouchableOpacity);
   const transX = useSharedValue(0);
   const viewHeight = useSharedValue(ITEM_HEIGHT);
-  // const context = useSharedValue({
-  //   translateX: 0,
-  //   prevX: 0,
-  //   temp: 0,
-  // });
-  const panGestureHandler = useAnimatedGestureHandler(
-    {
-      onStart: (_, context) => {
-        context.translateX = transX.value;
-        context.temp = 0;
-      },
-      onActive: (event, context) => {
-        //阻止 向右滑动
-        const isSwipingLeft = context.prevX
-          ? context.prevX >= event.translationX
-          : true;
-        console.log(
-          '%c Line:44 🥪 isSwipingLeft',
-          'font-size:18px;color:#ffffff;background:#ff6b6b',
-          context.translateX,
-          isSwipingLeft,
-        );
 
-        if (transX.value >= 0 && !isSwipingLeft) {
-          transX.value = 0;
-          return;
-        }
-        if (-transX.value > SWIPE_THRESHOLD && isSwipingLeft) {
-          //模拟阻力 到达阈值之后拖动很慢
-          const temp =
-            (event.translationX + context.translateX) * 0.005 + transX.value;
-          transX.value = withTiming(temp, {duration: 0});
-          context.temp = temp;
-        } else if (context.temp) {
-          transX.value = transX.value - (context.prevX - event.translationX);
-        } else {
-          transX.value = event.translationX + context.translateX;
-        }
-        context.prevX = event.translationX;
-        console.log(
-          '%c Line:74 🥪 event.translationX',
-          'font-size:18px;color:#ffffff;background:#f368e0',
-          event.translationX,
-          context.prevX,
-        );
-      },
-      onEnd: event => {
-        //未拉倒阈值
-        if (-event.translationX < SWIPE_THRESHOLD / 2) {
-          transX.value = withTiming(0, {duration: 300, easing: Easing.quad});
-        } else {
-          transX.value = withTiming(-SWIPE_THRESHOLD, {
+  useEffect(() => {
+    if (!open) {
+      console.log('open:', open);
+      onClose();
+    }
+  }, [open]);
+  const panGestureHandler = useAnimatedGestureHandler({
+    onStart: (_, context) => {
+      context.translateX = transX.value;
+      context.temp = 0;
+    },
+    onActive: (event, context) => {
+      //阻止 向右滑动
+      const isSwipingLeft = context.prevX
+        ? context.prevX >= event.translationX
+        : true;
+      console.log(
+        '%c Line:44 🥪 isSwipingLeft',
+        'font-size:18px;color:#ffffff;background:#ff6b6b',
+        context.translateX,
+        isSwipingLeft,
+      );
+
+      if (transX.value >= 0 && !isSwipingLeft) {
+        transX.value = 0;
+        return;
+      }
+      if (-transX.value > SWIPE_THRESHOLD && isSwipingLeft) {
+        //模拟阻力 到达阈值之后拖动很慢
+        const temp =
+          (event.translationX + context.translateX) * 0.005 + transX.value;
+        transX.value = withTiming(temp, {duration: 0});
+        context.temp = temp;
+      } else if (context.temp) {
+        transX.value = transX.value - (context.prevX - event.translationX);
+      } else {
+        transX.value = event.translationX + context.translateX;
+      }
+      context.prevX = event.translationX;
+    },
+    onEnd: event => {
+      //未拉倒阈值
+      if (-event.translationX < SWIPE_THRESHOLD / 2) {
+        transX.value = withTiming(0, {duration: 300, easing: Easing.quad});
+      } else {
+        console.log('拉倒阈值了', onSwipeOpenChange);
+        transX.value = withTiming(
+          -SWIPE_THRESHOLD,
+          {
             duration: 300,
             easing: Easing.quad,
-          });
-        }
-      },
+          },
+          isFinished => {
+            if (isFinished) {
+              console.log(
+                '%c Line:104 🥒 isFinished',
+                'font-size:18px;color:#ffffff;background:#6666FF',
+                isFinished,
+              );
+              runOnJS(onSwipeOpenChange)(data.id);
+            }
+          },
+        );
+      }
     },
-    [onSwipeOpenChange],
-  );
+  });
 
   //滑动过程中偏移量
   const rInnerContainer = useAnimatedStyle(() => {
@@ -202,6 +210,10 @@ export default function FoodItem({data, onRemove, onSwipeOpenChange}) {
     });
   };
 
+  const onClose = () => {
+    transX.value = withSpring(0, {duration: 10});
+  };
+
   return (
     // item容器动画
     <Animated.View style={[styles.container, rDeleteContainer]}>
@@ -214,7 +226,7 @@ export default function FoodItem({data, onRemove, onSwipeOpenChange}) {
           style={[styles.textContainer, rTextContainer]}
           onPress={handlePress}>
           <Animated.Text style={[styles.minusIcon, rMinusIcon]}>
-            -
+            <Icon name={'backspace'} size={24} color={'#fff'} />
           </Animated.Text>
           <Animated.Text style={[styles.remove, rRemove]}>
             REMOVE ITEM

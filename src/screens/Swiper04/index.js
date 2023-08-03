@@ -1,5 +1,5 @@
-import React, {useRef, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useRef, useState, useEffect} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import FoodItem from './FoodItem';
 import {FlatList} from 'react-native-gesture-handler';
 
@@ -37,15 +37,18 @@ const FOOD_ITEMS = [
 ];
 export default function Swiper04() {
   const [allItems, setAllItems] = useState(FOOD_ITEMS);
-  const [swipeOpen, setSwipeOpen] = useState(null);
   const flatListRef = useRef(null);
   const panRef = useRef(null);
-
+  const [openRow, setOpenRow] = useState(null);
+  useEffect(() => {
+    return () => setOpenRow(null);
+  }, []);
   const renderItem = ({item}) => {
     return (
       <FoodItem
         data={item}
         onRemove={handleRemove}
+        open={openRow === item.id}
         onSwipeOpenChange={onSwipeOpenChange}
       />
     );
@@ -55,21 +58,20 @@ export default function Swiper04() {
     setAllItems(prevState => prevState.filter(item => item.id !== id));
   };
 
-  const onSwipeOpenChange = tag => {
-    console.log(
-      '%c Line:59 🍡 打开了open',
-      'font-size:18px;color:#ffffff;background:#f368e0',
-      tag,
-    );
-    // swipeOpen(() => tag + '_open');
+  const onSwipeOpenChange = index => {
+    setOpenRow(index);
   };
+
+  const onClose = () => {};
 
   return (
     <View style={styles.container}>
       <View style={styles.innerContainer}>
         <View style={styles.topView}>
           <Text style={styles.yourItems}>Your items</Text>
-          <Text style={styles.seeMenu}>see menu</Text>
+          <TouchableOpacity onPress={onClose}>
+            <Text style={styles.seeMenu}>关闭某一个菜单</Text>
+          </TouchableOpacity>
         </View>
         <FlatList
           ref={flatListRef}
